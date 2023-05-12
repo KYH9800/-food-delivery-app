@@ -10,10 +10,13 @@ import {
   View,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+
 import DismissKeyboardView from '../components/DismissKeyboardView';
-import axios, {AxiosError} from 'axios';
-import Config from 'react-native-config';
 import {RootStackParamList} from '../../AppInner';
+
+import axios, {AxiosError} from 'axios';
+
+import Config from 'react-native-config'; // .env
 
 type SignUpScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -48,7 +51,7 @@ function SignUp({navigation}: SignUpScreenProps) {
    **********************************************/
   const onSubmit = useCallback(async () => {
     if (loading) {
-      return;
+      return; // 로딩중일때 막아준다.
     }
 
     if (!email || !email.trim()) {
@@ -80,11 +83,15 @@ function SignUp({navigation}: SignUpScreenProps) {
       );
     }
 
+    /*****************************************************************************
+     ** 최신 문법에서 finally가 추가됨 비동기/동기 방식으로 서버에 요청을 보낼 것
+     ** useCallback에서는 async를 사용할 수 있으나 useEffect는 안됨 -> 사용할 수 있는 방법이 있음
+     ** useEffect(() => { return () => {...}}) cleanup 함수
+     *****************************************************************************/
     console.log('이메일/이름/비밀번호: ', email, name, password);
+    console.log('API_URL: ', Config.API_URL);
     try {
       setLoading(true);
-
-      // axios
       const response = await axios.post(`${Config.API_URL}/user`, {
         email,
         name,
@@ -95,6 +102,7 @@ function SignUp({navigation}: SignUpScreenProps) {
       Alert.alert('알림', '회원가입 되었습니다.');
       navigation.navigate('SignIn');
     } catch (error) {
+      //! 타입스크립트가 error의 타입을 추론 못할수 있으니 AxiosError라는 별칭을 정해준다.
       const errorResponse = (error as AxiosError).response;
       console.error(errorResponse);
 
@@ -181,10 +189,10 @@ function SignUp({navigation}: SignUpScreenProps) {
               ? StyleSheet.compose(styles.loginButton, styles.loginButtonActive)
               : styles.loginButton
           }
-          disabled={!canGoNext || loading}
+          disabled={!canGoNext || loading} // 로딩중일때는 클릭 못하게하기 위해 disabled || 로딩중... 추가
           onPress={onSubmit}>
           {loading ? (
-            <ActivityIndicator color="white" />
+            <ActivityIndicator color="black" /> // 로딩중을 나타내는 태그
           ) : (
             <Text style={styles.loginButtonText}>회원가입</Text>
           )}

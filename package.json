@@ -18,7 +18,7 @@
     "axios": "^0.24.0",
     "react": "18.2.0",
     "react-native": "0.71.8",
-    "react-native-config": "^1.4.5",
+    "react-native-config": "^1.5.0",
     "react-native-encrypted-storage": "^4.0.2",
     "react-native-flipper": "^0.128.4",
     "react-native-keyboard-aware-scrollview": "^2.1.0",
